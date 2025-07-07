@@ -1,0 +1,24 @@
+.container {
+    max-width: 1216px;
+    margin: auto;
+}
+
+#top-bar {
+    border-bottom: 1px solid #F0EBEA;
+}
+
+#dashboard-header {
+    padding: 16px 0px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#dashboard-header h1 {
+    font-size: 28px;
+    line-height: 38px;
+    font-weight: 600;
+
+    color: #393332;
+}

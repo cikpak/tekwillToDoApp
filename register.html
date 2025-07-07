@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="./styles/global.css">
+
+        <title>Register TODO App</title>
+    </head>
+
+    <body>
+        <main>
+            <div id="left">
+                <div id="form-container">
+                    <div>
+                        <h1>Sign Up</h1>
+                    </div>
+                    
+                    <form>
+                        <div class="form-row">
+                            <label for="email">Your Email*</label>
+                            <input
+                                required
+                                type="email"
+                                name="email"
+                                placeholder="Insert your email"
+                            >
+                        </div>
+
+                        <div class="form-row">
+                            <label for="password">Password*</label>
+                            <input
+                                required
+                                type="password"
+                                name="password"
+                                placeholder="Insert your password"
+                            >
+                        </div>
+
+                        <div class="form-row">
+                            <label for="confirmPassword">Confirm Password*</label>
+                            <input
+                                required
+                                type="password"
+                                name="confirmPassword"
+                                placeholder="Confirm your password"
+                            >
+                        </div>
+
+                        <a href="./dashboard.html">
+                            Dashboard
+                        </a>
+
+                        <input type="submit" value="Sign Up" class="auth-button btn-full">
+                    </form>
+
+                    <div>
+                        <p class="sub-form-paragraph paragraph-l">
+                            Already have an account?
+                            <a href="./login.html">Log in</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="right">
+                <img src="./images/register.png" alt="">
+            </div>
+        </main>
+    </body>
+</html>
