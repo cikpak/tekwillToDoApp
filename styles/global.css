@@ -1,23 +1,39 @@
-input {
+input:not(input[type="submit"]),
+textarea {
   background-color: #fbf8f8;
   border: 1px solid #f0ebea;
   border-radius: 8px;
 
   padding: 13px 12px;
-  margin-top: 8px;
+  margin-top: 8px !important;
   width: 100%;
 
   font-size: 15px;
   line-height: 22px;
   color: #958785;
+  box-sizing: border-box;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+input:not(input[type="submit"]):focus,
+textarea:focus {
+  outline: none;
+  
+  box-shadow: 0px 0px 0px 3px rgba(255, 154, 141, 1);
+  border-color: #f73a22;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0 !important;
 }
 
 html {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 label {
@@ -33,15 +49,14 @@ label {
   margin-top: 24px;
 }
 
-input, textarea {
-    box-sizing: border-box;
-}
-
 button,
 input[type="submit"] {
   background-color: #f73a22;
   color: white;
   padding: 13px;
+  border-radius: 8px;
+
+  cursor: pointer;
 
   font-size: 15px;
   line-height: 22px;
@@ -49,7 +64,7 @@ input[type="submit"] {
 }
 
 .btn-full {
-    min-width: 100% !important;
+  width: 100% !important;
 }
 
 .auth-button {
@@ -61,62 +76,71 @@ html {
 }
 
 a {
-    color: #f73a22;
-    text-decoration: none;
+  color: #f73a22;
+  text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .paragraph-l {
-    color: #958785;
+  color: #958785;
 
-    font-size: 16px;
-    line-height: 24px;
+  font-size: 16px;
+  line-height: 24px;
 }
 
 .sub-form-paragraph {
-    margin-top: 24px;
+  margin-top: 24px;
 }
 
 main {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
 }
 
 #left {
-    flex-basis: 30%;
-    min-width: 648px;
+  flex-basis: 30%;
+  min-width: 648px;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #right {
-    flex-basis: 70%;
+  flex-basis: 70%;
 }
 
 #right img {
-    object-fit: cover;
+  object-fit: cover;
 
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 
-    object-position: center bottom;
+  object-position: center bottom;
 }
 
 #form-container {
-    max-width: 424px;
-    width: 100%;
+  max-width: 424px;
+  width: 100%;
 }
 
 .btn-secondary {
-  background-color: #FFFFFF;
-  border: 1px solid #F0EBEA;
+  background-color: #ffffff;
+  border: 1px solid #f0ebea;
   color: #393332;
+  border-radius: 8px;
+
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.04);
+}
+
+.btn-primary {
+  background-color: #f73a22;
+  border: 1px solid #f73a22;
+  color: white;
   border-radius: 8px;
 
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.04);
