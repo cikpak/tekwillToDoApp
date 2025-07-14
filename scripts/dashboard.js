@@ -3,24 +3,24 @@ const todosContainer = document.getElementById('todo-container');
 
 const todos = [];
 
-const getTodoItemHtml = (todoItemObj) => {
+const getTodoItemHtml = (todoItemObj, todoIndex) => {
     const creationDate = new Date(todoItemObj.createdAt);
 
     const formattedDate = `${creationDate.getDate()} / ${creationDate.getMonth()} / ${creationDate.getFullYear()}`;
 
     return `
-        <div class="todo-item">
+        <div class="todo-item" data-id="${todoIndex}">
             <div class="todo-header">
                 <div class="todo-details">
-                    <input type="checkbox" />
+                    <input type="checkbox" value="${todoItemObj.isDone}"/>
 
                     <div>
-                        <h2>${todoItemObj.title}</h2>
+                        <h2>${todoItemObj.title}  ${todoIndex}</h2>
                         <p>${todoItemObj.description}</p>
                     </div>
                 </div>
 
-                <div class="delete-todo-btn">
+                <div class="delete-todo-btn" onclick="deleteTodoHandler(${todoIndex})">
                     <svg
                         width="20"
                         height="20"
@@ -50,6 +50,14 @@ const getTodoItemHtml = (todoItemObj) => {
     `
 }
 
+const deleteTodoHandler = (todoIndex) => {
+    todos.splice(todoIndex, 1);
+
+    todosContainer.innerHTML = todos.map((todo, index) => {
+        return getTodoItemHtml(todo, index);
+    }).join('');
+}
+
 const showModal = () => {
     modal.classList.remove('hidden');
 }
@@ -61,7 +69,7 @@ const hideModal = () => {
 const addNewTodoItem = (todo) => {
     todos.push(todo);
 
-    const newTodoHtml = getTodoItemHtml(todo);
+    const newTodoHtml = getTodoItemHtml(todo, todos.length - 1);
     todosContainer.innerHTML = todosContainer.innerHTML + newTodoHtml;
 }
 

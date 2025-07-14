@@ -109,6 +109,9 @@ select:focus {
     font-size: 15px;
     line-height: 22px;
     font-weight: 500;
+
+    margin-top: 32px;
+    max-width: 608px;
 }
 
 .todo-container {
@@ -118,7 +121,7 @@ select:focus {
     flex-direction: column;
     gap: 16px;
 
-    margin-top: 32px;
+    margin-top: 16px;
 }
 
 .todo-details {
