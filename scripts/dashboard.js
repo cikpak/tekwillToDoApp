@@ -1,26 +1,104 @@
 const modal = document.getElementById('modal');
 const todosContainer = document.getElementById('todo-container');
+const tabsContainer = document.getElementById('tabs');
 
 const todos = [];
+let displayItems = [];
 
-const getTodoItemHtml = (todoItemObj, todoIndex) => {
+const TABS = {
+    todo: {
+        title: 'To Do',
+        value: 'todo'
+    },
+    completed: {
+        title: 'Completed Tasks',
+        value: 'completed'
+    },
+    deleted: {
+        title: 'Deleted Tasks',
+        value: 'deleted'
+    }
+}
+
+let activeTab = TABS.todo.value;
+
+const changeActiveTabHandler = (newTabName) => {
+    activeTab = newTabName;
+    const tabs = document.getElementsByClassName('tab-item');
+
+    for(let tab of tabs) {
+        tab.classList.remove('tab-active');
+    }
+
+    document.querySelector(`[data-tab-name="${newTabName}"]`).classList.add('tab-active');
+
+    filterItems();
+}
+
+tabsContainer.innerHTML = Object.keys(TABS).map(tab => {
+    return `
+        <div
+            class="tab-item ${tab === activeTab ? 'tab-active' : ''}"
+            onclick="changeActiveTabHandler('${TABS[tab].value}')"
+            data-tab-name="${tab}"
+        >
+            ${TABS[tab].title}
+        </div>
+    `
+}).join('');
+
+const reRender = () => {
+    todosContainer.innerHTML = displayItems.map((todo) => {
+        return getTodoItemHtml(todo);
+    }).join('');
+}
+
+const filterItems = () => {
+    switch (activeTab) {
+        case TABS.todo.value:
+            displayItems = todos.filter((todo) => {
+                return todo.isDone === false && todo.isDeleted == false; 
+            })
+
+            break;
+        case TABS.completed.value:
+            displayItems = todos.filter((todo) => {
+                return todo.isDone === true && todo.isDeleted == false; 
+            })
+
+            break;
+        case TABS.deleted.value:
+            displayItems = todos.filter((todo) => {
+                return todo.isDeleted === true; 
+            })
+
+            break;
+        default:
+            displayItems = todos;
+            break;
+    }
+
+    reRender();
+}
+
+const getTodoItemHtml = (todoItemObj) => {
     const creationDate = new Date(todoItemObj.createdAt);
 
     const formattedDate = `${creationDate.getDate()} / ${creationDate.getMonth()} / ${creationDate.getFullYear()}`;
 
     return `
-        <div class="todo-item" data-id="${todoIndex}">
+        <div class="todo-item" data-id="${todoItemObj.id}">
             <div class="todo-header">
                 <div class="todo-details">
                     <input type="checkbox" value="${todoItemObj.isDone}"/>
 
                     <div>
-                        <h2>${todoItemObj.title}  ${todoIndex}</h2>
+                        <h2>${todoItemObj.title}</h2>
                         <p>${todoItemObj.description}</p>
                     </div>
                 </div>
 
-                <div class="delete-todo-btn" onclick="deleteTodoHandler(${todoIndex})">
+                <div class="delete-todo-btn" onclick="deleteTodoHandler(${todoItemObj.id})">
                     <svg
                         width="20"
                         height="20"
@@ -50,12 +128,19 @@ const getTodoItemHtml = (todoItemObj, todoIndex) => {
     `
 }
 
-const deleteTodoHandler = (todoIndex) => {
-    todos.splice(todoIndex, 1);
+const deleteTodoHandler = (todoId) => {
+    const todoIndex = todos.findIndex((todo) => {
+        return todo.id === todoId;
+    });
 
-    todosContainer.innerHTML = todos.map((todo, index) => {
-        return getTodoItemHtml(todo, index);
-    }).join('');
+    const todoCopy = {
+        ...todos[todoIndex],
+        isDeleted: true
+    }
+
+    todos.splice(todoIndex, 1, todoCopy);
+
+    filterItems();
 }
 
 const showModal = () => {
@@ -69,7 +154,7 @@ const hideModal = () => {
 const addNewTodoItem = (todo) => {
     todos.push(todo);
 
-    const newTodoHtml = getTodoItemHtml(todo, todos.length - 1);
+    const newTodoHtml = getTodoItemHtml(todo);
     todosContainer.innerHTML = todosContainer.innerHTML + newTodoHtml;
 }
 
@@ -77,6 +162,7 @@ const formSubmitHandler = (event) => {
     event.preventDefault();
 
     const newTodo = {
+        id: Date.now(),
         title: event.target.elements.todoName.value,
         category: event.target.elements.category.value,
         description: event.target.elements.description.value,
