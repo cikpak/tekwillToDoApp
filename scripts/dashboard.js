@@ -1,26 +1,124 @@
 const modal = document.getElementById('modal');
 const todosContainer = document.getElementById('todo-container');
-
+const tabsContainer = document.getElementById('tabs');
 const todos = [];
 
-const getTodoItemHtml = (todoItemObj, todoIndex) => {
+const TABS = {
+    todo: {
+        value: 'todo',
+        title: 'To do'
+    },
+    completed: {
+        value: 'completed',
+        title: 'Completed Tasks'
+    },
+    deleted: {
+        value: 'deleted',
+        title: 'Deleted tasks'
+    }
+}
+
+let activeTab = TABS.todo.value
+
+let visibleItems = [];
+
+const reRender = () => {
+    todosContainer.innerHTML = visibleItems.map((item, index) => {
+        return getTodoItemHtml(item, index);
+    })
+}
+
+const filterItems = () => {
+    switch (activeTab) {
+        case TABS.todo.value:
+            visibleItems = todos.filter(todo => {
+                return todo.isDone === false && todo.isDeleted == false; 
+            })
+            break;
+        case TABS.deleted.value:
+            visibleItems = todos.filter(todo => {
+                return todo.isDeleted === true; 
+            })
+            break;
+        case TABS.completed.value:
+            visibleItems = todos.filter(todo => {
+                return todo.isDone === true && todo.isDeleted === false; 
+            })
+            break;
+        default:
+            visibleItems = todos;
+    }
+
+    reRender();
+}
+
+const completeTodo = (todoId) => {
+    const todoIndex = todos.findIndex(todo => {
+        return todo.id === todoId
+    })
+
+    const todoCopy = {
+        ...todos[todoIndex],
+        isDone: true
+    }
+
+    todos.splice(todoIndex, 1, todoCopy);
+
+    todosContainer.innerHTML = todos.map((todo) => {
+        return getTodoItemHtml(todo);
+    }).join('');
+
+    filterItems();
+}
+
+const changeActiveTabHandler = (newTab) => {
+    activeTab = newTab;
+    const tabs = document.getElementsByClassName('tab-item');
+
+    for(let tab of tabs) {
+        tab.classList.remove('tab-active');
+    }
+
+    document.querySelector(`[data-tab-name="${newTab}"]`).classList.add('tab-active');
+
+    filterItems();
+}
+
+tabsContainer.innerHTML = Object.keys(TABS).map(tab => {
+    return `
+        <div
+            class="tab-item ${tab === activeTab ? 'tab-active' : ''}"
+            onclick="changeActiveTabHandler('${TABS[tab].value}')"
+            data-tab-name="${tab}"
+        >
+            ${TABS[tab].title}
+        </div>
+    `
+}).join('');
+
+
+const getTodoItemHtml = (todoItemObj) => {
     const creationDate = new Date(todoItemObj.createdAt);
 
     const formattedDate = `${creationDate.getDate()} / ${creationDate.getMonth()} / ${creationDate.getFullYear()}`;
 
     return `
-        <div class="todo-item" data-id="${todoIndex}">
+        <div class="todo-item" data-id="${todoItemObj.id}">
             <div class="todo-header">
                 <div class="todo-details">
-                    <input type="checkbox" value="${todoItemObj.isDone}"/>
+                    <input
+                        type="checkbox"
+                        ${todoItemObj.isDone ? 'checked' : ''}
+                        onclick="completeTodo(${todoItemObj.id})"
+                    />
 
                     <div>
-                        <h2>${todoItemObj.title}  ${todoIndex}</h2>
+                        <h2>${todoItemObj.title} ${todoItemObj.id}</h2>
                         <p>${todoItemObj.description}</p>
                     </div>
                 </div>
 
-                <div class="delete-todo-btn" onclick="deleteTodoHandler(${todoIndex})">
+                <div class="delete-todo-btn" onclick="deleteTodoHandler(${todoItemObj.id})">
                     <svg
                         width="20"
                         height="20"
@@ -50,12 +148,23 @@ const getTodoItemHtml = (todoItemObj, todoIndex) => {
     `
 }
 
-const deleteTodoHandler = (todoIndex) => {
-    todos.splice(todoIndex, 1);
+const deleteTodoHandler = (todoId) => {
+    const todoIndex = todos.findIndex(todo => {
+        return todo.id === todoId
+    })
 
-    todosContainer.innerHTML = todos.map((todo, index) => {
-        return getTodoItemHtml(todo, index);
+    const todoCopy = {
+        ...todos[todoIndex],
+        isDeleted: true
+    }
+
+    todos.splice(todoIndex, 1, todoCopy);
+
+    todosContainer.innerHTML = todos.map((todo) => {
+        return getTodoItemHtml(todo);
     }).join('');
+
+    filterItems();
 }
 
 const showModal = () => {
@@ -68,15 +177,14 @@ const hideModal = () => {
 
 const addNewTodoItem = (todo) => {
     todos.push(todo);
-
-    const newTodoHtml = getTodoItemHtml(todo, todos.length - 1);
-    todosContainer.innerHTML = todosContainer.innerHTML + newTodoHtml;
+    filterItems()
 }
 
 const formSubmitHandler = (event) => {
     event.preventDefault();
 
     const newTodo = {
+        id: Date.now(),
         title: event.target.elements.todoName.value,
         category: event.target.elements.category.value,
         description: event.target.elements.description.value,
@@ -91,3 +199,5 @@ const formSubmitHandler = (event) => {
     event.target.reset();
     hideModal();
 }
+
+filterItems();
