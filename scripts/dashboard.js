@@ -20,6 +20,16 @@ const TABS = {
     }
 }
 
+const TODO_CATEGORIES_CLASSES_MAP = {
+    'all': 'All ToDos',
+    'urgent': 'Urgent',
+    'medium': 'Not Urgent'
+}
+
+const filterChangeHandler = (event) => {
+    filterItems(event.target.value);
+}
+
 let activeTab = TABS.todo.value;
 
 const changeActiveTabHandler = (newTabName) => {
@@ -53,23 +63,23 @@ const reRender = () => {
     }).join('');
 }
 
-const filterItems = () => {
+const filterItems = (category = 'all') => {
     switch (activeTab) {
         case TABS.todo.value:
             displayItems = todos.filter((todo) => {
-                return todo.isDone === false && todo.isDeleted == false; 
+                return todo.isDone === false && todo.isDeleted == false && (category === 'all' ? true : todo.category === category); 
             })
 
             break;
         case TABS.completed.value:
             displayItems = todos.filter((todo) => {
-                return todo.isDone === true && todo.isDeleted == false; 
+                return todo.isDone === true && todo.isDeleted == false && (category === 'all' ? true : todo.category === category);  
             })
 
             break;
         case TABS.deleted.value:
             displayItems = todos.filter((todo) => {
-                return todo.isDeleted === true; 
+                return todo.isDeleted === true && (category === 'all' ? true : todo.category === category);
             })
 
             break;
@@ -81,16 +91,22 @@ const filterItems = () => {
     reRender();
 }
 
+const getFormattedDate = (date) => {
+    const parsedDate = new Date(date);
+
+    return `${parsedDate.getDate()} / ${parsedDate.getMonth()} / ${parsedDate.getFullYear()}`;
+}
+
 const getTodoItemHtml = (todoItemObj) => {
-    const creationDate = new Date(todoItemObj.createdAt);
-
-    const formattedDate = `${creationDate.getDate()} / ${creationDate.getMonth()} / ${creationDate.getFullYear()}`;
-
     return `
         <div class="todo-item" data-id="${todoItemObj.id}">
             <div class="todo-header">
                 <div class="todo-details">
-                    <input type="checkbox" value="${todoItemObj.isDone}"/>
+                    <input
+                        type="checkbox"
+                        ${todoItemObj.isDone === true ? 'checked': ''}
+                        onclick="completeTodoHandler(${todoItemObj.id})"
+                    />
 
                     <div>
                         <h2>${todoItemObj.title}</h2>
@@ -115,13 +131,22 @@ const getTodoItemHtml = (todoItemObj) => {
             </div>
 
             <div class="todo-footer">
-                <div>
-                    <div class="category urgent">${todoItemObj.category}</div>
-                </div>
-
+                ${
+                    todoItemObj.isDone === true ? `
+                        <div class="date-wrapper">
+                            <span class="date-label">Completed on:</span>
+                            <span class="date">${getFormattedDate(todoItemObj.completedAt)}</span>
+                        </div>
+                    ` : `
+                        <div>
+                            <div class="category urgent">${todoItemObj.category}</div>
+                        </div>
+                    `
+                }
+                
                 <div class="date-wrapper">
                     <span class="date-label">Created on:</span>
-                    <span class="date">${formattedDate}</span>
+                    <span class="date">${getFormattedDate(todoItemObj.createdAt)}</span>
                 </div>
             </div>
         </div>
@@ -136,6 +161,22 @@ const deleteTodoHandler = (todoId) => {
     const todoCopy = {
         ...todos[todoIndex],
         isDeleted: true
+    }
+
+    todos.splice(todoIndex, 1, todoCopy);
+
+    filterItems();
+}
+
+const completeTodoHandler = (todoId) => {
+    const todoIndex = todos.findIndex((todo) => {
+        return todo.id === todoId;
+    });
+
+    const todoCopy = {
+        ...todos[todoIndex],
+        completedAt: new Date(),
+        isDone: true
     }
 
     todos.splice(todoIndex, 1, todoCopy);

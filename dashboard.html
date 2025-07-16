@@ -56,15 +56,13 @@
 
           <div id="header-bottom">
             <div id="tabs">
-              
             </div>
 
             <div>
-              <select id="filter">
-                <option>Urgent</option>
-                <option>Not Urgent</option>
-                <option>Item 3</option>
-                <option>Item 4</option>
+              <select id="filter" onchange="filterChangeHandler(event)">
+                  <option value="all">All ToDos</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="medium">Not Urgent</option>
               </select>
             </div>
           </div>
@@ -126,10 +124,8 @@
               <div class="form-row">
                 <label for="category">Category</label>
                 <select id="category" name="category">
-                  <option>Urgent</option>
-                  <option>Not Urgent</option>
-                  <option>Item 3</option>
-                  <option>Item 4</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="medium">Not Urgent</option>
                 </select>
               </div>
 
