@@ -6,6 +6,7 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 
         <link
@@ -25,7 +26,7 @@
                         <h1>Sign Up</h1>
                     </div>
                     
-                    <form>
+                    <form onsubmit="registerHandler(event)">
                         <div class="form-row">
                             <label for="email">Your Email*</label>
                             <input
@@ -33,6 +34,7 @@
                                 type="email"
                                 name="email"
                                 placeholder="Insert your email"
+                                value="simion.gorgos@gmail.com"
                             >
                         </div>
 
@@ -43,6 +45,7 @@
                                 type="password"
                                 name="password"
                                 placeholder="Insert your password"
+                                value="password"
                             >
                         </div>
 
@@ -53,6 +56,7 @@
                                 type="password"
                                 name="confirmPassword"
                                 placeholder="Confirm your password"
+                                value="password"
                             >
                         </div>
 
@@ -76,5 +80,8 @@
                 <img src="./images/register.png" alt="">
             </div>
         </main>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <script src="./scripts/register.js"></script>
     </body>
 </html>

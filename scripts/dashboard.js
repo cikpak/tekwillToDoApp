@@ -2,8 +2,10 @@ const modal = document.getElementById('modal');
 const todosContainer = document.getElementById('todo-container');
 const tabsContainer = document.getElementById('tabs');
 
-const todos = [];
+let todos = [];
 let displayItems = [];
+
+const currentUser = JSON.parse(localStorage.getItem('user'))
 
 const TABS = {
     todo: {
@@ -199,11 +201,10 @@ const addNewTodoItem = (todo) => {
     todosContainer.innerHTML = todosContainer.innerHTML + newTodoHtml;
 }
 
-const formSubmitHandler = (event) => {
+const formSubmitHandler = async (event) => {
     event.preventDefault();
 
     const newTodo = {
-        id: Date.now(),
         title: event.target.elements.todoName.value,
         category: event.target.elements.category.value,
         description: event.target.elements.description.value,
@@ -213,8 +214,40 @@ const formSubmitHandler = (event) => {
         isDeleted: false
     }
 
-    addNewTodoItem(newTodo);
+    const response = await fetch('http://localhost:3000/todos', {
+        body: JSON.stringify(newTodo),
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json",
+            'current-user': currentUser.id
+        },
+    })
+
+    if(response.ok === true){
+        const data = await response.json();
+
+        addNewTodoItem(data);   
+    }else{
+
+    }
 
     event.target.reset();
     hideModal();
+}
+
+if(currentUser == null) {
+    document.location.href = '/login.html'
+}else{
+    fetch('http://localhost:3000/todos', {
+        method: 'GET',
+        headers: {
+            'current-user': currentUser.id
+        },
+    }).then(response => {
+        response.json().then(data => {
+            console.log('data :>> ', data);
+            todos = data;
+            filterItems();
+        });
+    })
 }
