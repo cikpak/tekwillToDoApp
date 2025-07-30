@@ -122,6 +122,7 @@ select:focus {
     gap: 16px;
 
     margin-top: 16px;
+    padding-bottom: 120px;
 }
 
 .todo-details {
@@ -321,4 +322,8 @@ select:focus {
 
 .modal-header svg{
     cursor: pointer;
+}
+
+.line-through{
+    text-decoration: line-through;
 }

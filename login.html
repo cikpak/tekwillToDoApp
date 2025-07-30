@@ -7,7 +7,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
-
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
         <link
             href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"
             rel="stylesheet"
@@ -25,7 +25,7 @@
                         <h1>Let’s Sign In</h1>
                     </div>
                     
-                    <form>
+                    <form onsubmit="loginHandler(event)">
                         <div class="form-row">
                             <label for="email">Email Address</label>
                             <input
@@ -62,5 +62,8 @@
                 <img src="./images/background.png" alt="">
             </div>
         </main>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <script src="./scripts/login.js"></script>
     </body>
 </html>

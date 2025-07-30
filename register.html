@@ -7,6 +7,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
         <link
             href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css"
@@ -25,7 +26,7 @@
                         <h1>Sign Up</h1>
                     </div>
                     
-                    <form>
+                    <form onsubmit="registerHandler(event)">
                         <div class="form-row">
                             <label for="email">Your Email*</label>
                             <input
@@ -42,6 +43,8 @@
                                 required
                                 type="password"
                                 name="password"
+                                minlength="8"
+                                maxlength="16"
                                 placeholder="Insert your password"
                             >
                         </div>
@@ -52,13 +55,11 @@
                                 required
                                 type="password"
                                 name="confirmPassword"
+                                minlength="8"
+                                maxlength="16"
                                 placeholder="Confirm your password"
                             >
                         </div>
-
-                        <a href="./dashboard.html">
-                            Dashboard
-                        </a>
 
                         <input type="submit" value="Sign Up" class="auth-button btn-full">
                     </form>
@@ -76,5 +77,8 @@
                 <img src="./images/register.png" alt="">
             </div>
         </main>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+        <script src="./scripts/register.js"></script>
     </body>
 </html>
