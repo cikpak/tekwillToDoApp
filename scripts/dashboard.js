@@ -1,48 +1,47 @@
-const modal = document.getElementById('modal');
+import { getFormattedDate } from "./helpers.js";
+import { TABS, TODO_CATEGORIES_CLASSES_MAP } from "./constants.js";
+import { showModal, hideModal } from "./createTodoModal.js"
+
+import { createTodo } from "./api.js"
+
 const todosContainer = document.getElementById('todo-container');
 const tabsContainer = document.getElementById('tabs');
 
 let todos = [];
-
-todos = JSON.parse(localStorage.getItem('todos'));
-
 let displayItems = [];
+let activeTab = TABS.todo.value;
+
+const currentUser = JSON.parse(localStorage.getItem('user'));
 
 const logoutHandler = () => {
     localStorage.removeItem('user');
     document.location.href = '/login.html';
 }
 
-if(localStorage.getItem('user') == null) {
-    document.location.href = '/login.html';
-}
+const init = async () => {
+    if(currentUser == null) {
+        document.location.href = '/login.html';
+    }else{
+        try {
+            const response = await fetch('http://localhost:3000/todos', {
+                method: 'GET',
+                headers: {
+                    'current-user': currentUser.id
+                }
+            })
 
-const TABS = {
-    todo: {
-        title: 'To Do',
-        value: 'todo'
-    },
-    completed: {
-        title: 'Completed Tasks',
-        value: 'completed'
-    },
-    deleted: {
-        title: 'Deleted Tasks',
-        value: 'deleted'
+            todos = await response.json();;
+
+            filterItems();
+        } catch (error) {
+            console.log('error :>> ', error);
+        }
     }
-}
-
-const TODO_CATEGORIES_CLASSES_MAP = {
-    'all': 'All ToDos',
-    'urgent': 'Urgent',
-    'medium': 'Not Urgent',
 }
 
 const filterChangeHandler = (event) => {
     filterItems(event.target.value);
 }
-
-let activeTab = TABS.todo.value;
 
 const changeActiveTabHandler = (newTabName) => {
     activeTab = newTabName;
@@ -76,8 +75,6 @@ const reRender = () => {
 }
 
 const filterItems = (category = 'all') => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-    
     switch (activeTab) {
         case TABS.todo.value:
             displayItems = todos.filter((todo) => {
@@ -103,12 +100,6 @@ const filterItems = (category = 'all') => {
     }
 
     reRender();
-}
-
-const getFormattedDate = (date) => {
-    const parsedDate = new Date(date);
-
-    return `${parsedDate.getDate()} / ${parsedDate.getMonth()} / ${parsedDate.getFullYear()}`;
 }
 
 const getTodoItemHtml = (todoItemObj) => {
@@ -186,54 +177,71 @@ const getTodoItemHtml = (todoItemObj) => {
     `
 }
 
-const deleteTodoHandler = (todoId) => {
+const deleteTodoHandler = async (todoId) => {
     const todoIndex = todos.findIndex((todo) => {
         return todo.id === todoId;
     });
 
-    const todoCopy = {
-        ...todos[todoIndex],
-        isDeleted: !todos[todoIndex].isDeleted
+    try {
+        const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                isDeleted: !todos[todoIndex].isDeleted
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'current-user': currentUser.id
+            }
+        });
+
+        const data = await response.json();
+
+        todos.splice(todoIndex, 1, data);
+        filterItems();
+    } catch (error) {
+        Toastify({
+            text: 'Failed to delete todo!',
+            className: "error-toast"
+        }).showToast();
     }
-
-    todos.splice(todoIndex, 1, todoCopy);
-
-    filterItems();
 }
 
-const completeTodoHandler = (todoId) => {
+const completeTodoHandler = async (todoId) => {
     const todoIndex = todos.findIndex((todo) => {
         return todo.id === todoId;
     });
 
-    const todoCopy = {
-        ...todos[todoIndex],
-        completedAt: new Date(),
-        isDone: !todos[todoIndex].isDone
+    try {
+        const response = await fetch(`http://localhost:3000/todos/${todoId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                isDone: !todos[todoIndex].isDone,
+                completedAt: Date.now()
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'current-user': currentUser.id
+            }
+        });
+
+        const data = await response.json();
+
+        todos.splice(todoIndex, 1, data);
+        filterItems();
+    } catch (error) {
+        Toastify({
+            text: 'Failed to complete todo!',
+            className: "error-toast"
+        }).showToast();
     }
-
-    todos.splice(todoIndex, 1, todoCopy);
-
-    filterItems();
-}
-
-const showModal = () => {
-    modal.classList.remove('hidden');
-}
-
-const hideModal = () => {
-    modal.classList.add('hidden');
 }
 
 const addNewTodoItem = (todo) => {
     todos.push(todo);
-
-    localStorage.setItem('todos', JSON.stringify(todos));
-
     filterItems();
 }
 
-const formSubmitHandler = (event) => {
+const formSubmitHandler = async (event) => {
     event.preventDefault();
 
     const newTodo = {
@@ -247,10 +255,28 @@ const formSubmitHandler = (event) => {
         isDeleted: false
     }
 
-    addNewTodoItem(newTodo);
+    const data = await createTodo(newTodo);
+
+    if(data == null) {
+        Toastify({
+            text: 'Failed to create a new todo!',
+            className: "error-toast"
+        }).showToast();
+    }else{
+        addNewTodoItem(data);
+    }
 
     event.target.reset();
     hideModal();
 }
 
-filterItems();
+window.showModal = showModal;
+window.hideModal = hideModal;
+window.formSubmitHandler = formSubmitHandler;
+window.completeTodoHandler = completeTodoHandler
+window.deleteTodoHandler = deleteTodoHandler;
+window.changeActiveTabHandler = changeActiveTabHandler;
+window.filterChangeHandler = filterChangeHandler;
+window.logoutHandler = logoutHandler;
+
+init();
