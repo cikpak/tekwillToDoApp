@@ -200,7 +200,7 @@ const deleteTodoHandler = async (todoId) => {
         filterItems();
     } catch (error) {
         Toastify({
-            text: 'Failed to delete todo!',
+            text: 'Failed to delete TODO!',
             className: "error-toast"
         }).showToast();
     }
